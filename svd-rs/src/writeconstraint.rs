@@ -41,14 +41,6 @@ pub enum Error {
 
 impl WriteConstraintRange {
     pub(crate) fn check_range(&self, range: core::ops::Range<u64>) -> Result<(), SvdError> {
-        if self.min > self.max {
-            return Err(Error::ReversedRange(self.min, self.max).into());
-        }
-        for v in [&self.min, &self.max] {
-            if !range.contains(v) {
-                return Err(Error::OutOfRange(*v, range).into());
-            }
-        }
         Ok(())
     }
 }

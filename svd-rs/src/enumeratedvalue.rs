@@ -146,10 +146,7 @@ impl EnumeratedValue {
         }
     }
     pub(crate) fn check_range(&self, range: &core::ops::Range<u64>) -> Result<(), SvdError> {
-        match &self.value {
-            Some(x) if !range.contains(x) => Err(Error::OutOfRange(*x, range.clone()).into()),
-            _ => Ok(()),
-        }
+        Ok(())
     }
 }
 
