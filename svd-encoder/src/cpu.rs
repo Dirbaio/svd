@@ -10,8 +10,10 @@ impl Encode for Cpu {
             new_node("revision", self.revision.clone()),
             self.endian.encode_node()?,
             new_node("mpuPresent", format!("{}", self.mpu_present)),
-            new_node("fpuPresent", format!("{}", self.fpu_present)),
         ];
+        if let Some(v) = &self.fpu_present {
+            children.push(new_node("fpuPresent", format!("{}", v)));
+        }
         if let Some(v) = &self.fpu_double_precision {
             children.push(new_node("fpuDP", format!("{}", v)));
         }

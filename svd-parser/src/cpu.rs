@@ -17,7 +17,7 @@ impl Parse for Cpu {
             .revision(tree.get_child_text("revision")?)
             .endian(Endian::parse(&tree.get_child_elem("endian")?, config)?)
             .mpu_present(tree.get_child_bool("mpuPresent")?)
-            .fpu_present(tree.get_child_bool("fpuPresent")?)
+            .fpu_present(optional::<BoolParse>("fpuPresent", tree, &())?)
             .fpu_double_precision(optional::<BoolParse>("fpuDP", tree, &())?)
             .dsp_present(optional::<BoolParse>("dspPresent", tree, &())?)
             .icache_present(optional::<BoolParse>("icachePresent", tree, &())?)
