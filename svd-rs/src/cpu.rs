@@ -21,7 +21,15 @@ pub struct Cpu {
     pub mpu_present: bool,
 
     /// Indicate whether the processor is equipped with a hardware floating point unit (FPU)
-    pub fpu_present: bool,
+    #[cfg_attr(
+        feature = "serde",
+        serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            rename = "fpuPresent"
+        )
+    )]
+    pub fpu_present: Option<bool>,
 
     /// Indicate whether the processor is equipped with a double precision floating point unit.
     /// This element is valid only when `fpu_present` is set to `true`
@@ -126,7 +134,7 @@ impl From<Cpu> for CpuBuilder {
             revision: Some(c.revision),
             endian: Some(c.endian),
             mpu_present: Some(c.mpu_present),
-            fpu_present: Some(c.fpu_present),
+            fpu_present: c.fpu_present,
             fpu_double_precision: c.fpu_double_precision,
             dsp_present: c.dsp_present,
             icache_present: c.icache_present,
@@ -164,8 +172,8 @@ impl CpuBuilder {
         self
     }
     /// Set the fpu_present of the cpu.
-    pub fn fpu_present(mut self, value: bool) -> Self {
-        self.fpu_present = Some(value);
+    pub fn fpu_present(mut self, value: Option<bool>) -> Self {
+        self.fpu_present = value;
         self
     }
     /// Set the fpu_double_precision of the cpu.
@@ -238,9 +246,7 @@ impl CpuBuilder {
             mpu_present: self
                 .mpu_present
                 .ok_or_else(|| BuildError::Uninitialized("mpu_present".to_string()))?,
-            fpu_present: self
-                .fpu_present
-                .ok_or_else(|| BuildError::Uninitialized("fpu_present".to_string()))?,
+            fpu_present: self.fpu_present,
             fpu_double_precision: self.fpu_double_precision,
             dsp_present: self.dsp_present,
             icache_present: self.icache_present,
@@ -281,8 +287,8 @@ impl Cpu {
         if let Some(mpu_present) = builder.mpu_present {
             self.mpu_present = mpu_present;
         }
-        if let Some(fpu_present) = builder.fpu_present {
-            self.fpu_present = fpu_present;
+        if builder.fpu_present.is_some() {
+            self.fpu_present = builder.fpu_present;
         }
         if builder.fpu_double_precision.is_some() {
             self.fpu_double_precision = builder.fpu_double_precision;
